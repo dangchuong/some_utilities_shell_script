@@ -1,0 +1,5 @@
+#!/bin/bash
+google-chrome --disable-gpu --disable-software-rasterizer &
+subl &
+mysql-workbench &
+exit 0
