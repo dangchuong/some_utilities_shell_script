@@ -1,0 +1,36 @@
+#!/bin/bash
+read -p "Enter root directory: " directory
+read -p "Enter root domain: " domain
+read -p "Enter config file name: " config_file_name
+cat <<EOF >/etc/nginx/sites-available/$config_file_name.conf
+	server {
+
+        listen       80;
+        server_name  $domain.local;
+
+        root   $directory;
+     
+        error_log  /var/log/nginx/kamora/$config_file_name.error.log;
+        access_log  /var/log/nginx/kamora/$config_file_name.access.log;
+
+        location / {
+                fastcgi_pass   unix:/var/run/php/php7.4-fpm.sock;
+                fastcgi_index  index.php;
+                include        fastcgi.conf;
+                try_files \$uri /index.php?\$query_string;
+
+        }
+
+        location ~* \.(?:jpg|jpeg|gif|png|ico|flv|swf|html|css|js|ttf|woff|woff2|txt|doc|docx|pdf|mp3|aac|ogg)$ {
+                rewrite ^/modules/(.*)$ /application/modules/\$1;
+                access_log off;
+                allow all;
+        }
+
+       
+ }
+EOF
+ln -s /etc/nginx/sites-available/$config_file_name.conf /etc/nginx/sites-enabled/
+echo "127.0.0.1		$domain.local" >> /etc/hosts
+service nginx restart
+exit 0
