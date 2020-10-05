@@ -6,7 +6,7 @@ cat <<EOF >/etc/nginx/sites-available/$config_file_name.conf
 	server {
 
         listen       80;
-        server_name  $domain.local;
+        server_name  $domain;
 
         root   $directory;
      
@@ -31,6 +31,6 @@ cat <<EOF >/etc/nginx/sites-available/$config_file_name.conf
  }
 EOF
 ln -s /etc/nginx/sites-available/$config_file_name.conf /etc/nginx/sites-enabled/
-echo "127.0.0.1		$domain.local" >> /etc/hosts
+echo "127.0.0.1		$domain" >> /etc/hosts
 service nginx restart
 exit 0
